@@ -45,4 +45,25 @@ public class MainActivity extends SlidingFragmentActivity {
         transaction.commit();// 提交事务
         // fm.findFragmentByTag(TAG_CONTENT);
     }
+    /**
+     * 获取侧边栏对象
+     *
+     */
+    public LeftMenuFragment getLeftMenuFragment() {
+        FragmentManager fm = getSupportFragmentManager();
+        LeftMenuFragment fragment = (LeftMenuFragment) fm
+                .findFragmentByTag(TAG_LEFT_MENU);
+        return fragment;
+    }
+
+    /**
+     * 获取主页对象
+     *
+     */
+    public ContentFragment getContentFragment() {
+        FragmentManager fm = getSupportFragmentManager();
+        ContentFragment fragment = (ContentFragment) fm
+                .findFragmentByTag(TAG_CONTENT);
+        return fragment;
+    }
 }
