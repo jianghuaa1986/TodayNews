@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.view.Window;
 
 import com.example.xw.todaynews.Base.Impl.ContentFragment;
 import com.example.xw.todaynews.Base.Impl.LeftMenuFragment;
@@ -21,7 +22,9 @@ public class MainActivity extends SlidingFragmentActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_main);
+
         // 添加侧边栏
         setBehindContentView(R.layout.left_menu);
         SlidingMenu slidingMenu = getSlidingMenu();

@@ -15,7 +15,9 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".Activity.MainActivity">
+        <activity android:name=".Activity.MainActivity"
+
+                  android:theme="@style/Theme.PageIndicatorDefaults"   >
         </activity>
         <activity android:name=".Activity.GuideActivity"></activity>
     </application>
