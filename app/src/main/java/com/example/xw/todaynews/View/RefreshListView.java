@@ -6,6 +6,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
+import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -19,7 +21,7 @@ import java.util.Date;
 /**
  * Created by xw on 2016/9/3.
  */
-public class RefreshListView extends ListView {
+public class RefreshListView extends ListView implements AbsListView.OnScrollListener,AdapterView.OnItemClickListener{
     private static final int STATE_PULL_TO_REFRESH = 1;// 下拉刷新
     private static final int STATE_RELEASE_TO_REFRESH = 2;// 松开刷新
     private static final int STATE_REFRESHING = 3;// 正在刷新
@@ -40,21 +42,45 @@ public class RefreshListView extends ListView {
 
     private RotateAnimation animUp;// 箭头向上动画
     private RotateAnimation animDown;// 箭头向下动画
+    // 脚布局
+    private View mFooterView;
+    private int mFooterViewHeight;
+    private boolean isLoadingMore;// 标记是否正在加载更多
     public RefreshListView(Context context) {
         super(context);
-        initView();
+        iniHeadertView();
+        initFooterView();
     }
 
     public RefreshListView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        initView();
+        iniHeadertView();
+        initFooterView();
     }
 
     public RefreshListView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        initView();
+        iniHeadertView();
+        initFooterView();
     }
-    private void initView() {
+    /**
+     * 初始化脚布局
+     */
+    private void initFooterView() {
+        mFooterView = View.inflate(getContext(), R.layout.list_refresh_footer,
+                null);
+        this.addFooterView(mFooterView);
+
+        mFooterView.measure(0, 0);
+        mFooterViewHeight = mFooterView.getMeasuredHeight();
+
+        // 隐藏脚布局
+        mFooterView.setPadding(0, -mFooterViewHeight, 0, 0);
+
+        // 设置滑动监听
+        this.setOnScrollListener(this);
+    }
+    private void iniHeadertView() {
         mHeaderView = View.inflate(getContext(), R.layout.list_refresh_header,
                 null);
         this.addHeaderView(mHeaderView);// 添加头布局
@@ -200,30 +226,80 @@ public class RefreshListView extends ListView {
      * 设置上次刷新时间
      */
     private void setCurrentTime() {
-        // 08:10 8:10 1
+
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");// HH表示24小时制
         String time = format.format(new Date());
         tvTime.setText(time);
     }
     // 刷新完成
     public void onRefreshComplete(boolean success) {
-        // 隐藏头布局
-        mHeaderView.setPadding(0, -mHeaderViewHeight, 0, 0);
-        mCurrentState = STATE_PULL_TO_REFRESH;
-        // 隐藏进度条
-        pbLoading.setVisibility(View.INVISIBLE);
-        ivArrow.setVisibility(View.VISIBLE);
-        tvTitle.setText("下拉刷新");
+        if (!isLoadingMore) {
+            // 隐藏头布局
+            mHeaderView.setPadding(0, -mHeaderViewHeight, 0, 0);
+            mCurrentState = STATE_PULL_TO_REFRESH;
+            // 隐藏进度条
+            pbLoading.setVisibility(View.INVISIBLE);
+            ivArrow.setVisibility(View.VISIBLE);
+            tvTitle.setText("下拉刷新");
 
-        // 刷新失败,不需要更新时间
-        if (success) {
-            setCurrentTime();
+            // 刷新失败,不需要更新时间
+            if (success) {
+                setCurrentTime();
+            }
+        }
+        else {
+            // 隐藏脚布局
+            mFooterView.setPadding(0, -mFooterViewHeight, 0, 0);
+            isLoadingMore = false;
         }
     }
     private OnRefreshListener mListener;
+
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+        if (mItemClickListener != null) {
+            mItemClickListener.onItemClick(adapterView, view, position
+                    - getHeaderViewsCount(), id);
+        }
+    }
+    private OnItemClickListener mItemClickListener;
+    // 重写item点击方法
+    @Override
+    public void setOnItemClickListener(
+            android.widget.AdapterView.OnItemClickListener listener) {
+        mItemClickListener = listener;
+        super.setOnItemClickListener(this);// 将点击事件设置给当前的RefreshListView
+    }
+
+    @Override
+    public void onScrollStateChanged(AbsListView absListView, int scrollState) {
+        if (scrollState == SCROLL_STATE_IDLE) {
+            int lastVisiblePosition = getLastVisiblePosition();// 当前界面显示的最后一个item的位置
+            if (lastVisiblePosition >= getCount() - 1 && !isLoadingMore) {
+                isLoadingMore = true;
+                // 加载更多了....(到底了)
+                // 显示脚布局
+                mFooterView.setPadding(0, 0, 0, 0);
+                // listview设置当前要展示的item的位置
+                setSelection(getCount() - 1);// 跳到加载更多item的位置去展示
+
+                if (mListener != null) {
+                    mListener.loadMore();
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onScroll(AbsListView absListView, int i, int i1, int i2) {
+
+    }
+
     public interface OnRefreshListener {
         // 下拉刷新的回调
         public void onRefresh();
+        // 加载更多的回调
+        public void loadMore();
     }
     public void setOnRefreshListener(OnRefreshListener listener) {
         mListener = listener;

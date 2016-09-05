@@ -20,6 +20,7 @@
                   android:theme="@style/Theme.PageIndicatorDefaults"   >
         </activity>
         <activity android:name=".Activity.GuideActivity"></activity>
+        <activity android:name=".Activity.NewsDetailActivity"></activity>
     </application>
 
 </manifest>
