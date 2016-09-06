@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -118,7 +119,7 @@ public class TabDetailPager extends BaseMenuDetailPager {
         lvList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                System.out.println("pos:" + position);
+
 
                 NewsData.News news = mNewsList.get(position);
 
@@ -201,7 +202,7 @@ public class TabDetailPager extends BaseMenuDetailPager {
             }
         });
     }
-    protected void processResult(String result,boolean isMore) {
+    protected void processResult(String result, boolean isMore) {
         Gson gson = new Gson();
         mNewsTabData = gson.fromJson(result, NewsData.class);
 
@@ -213,9 +214,9 @@ public class TabDetailPager extends BaseMenuDetailPager {
             mMoreUrl = null;
         }
 
-        // 初始化头条新闻
-        mTopNewsList = mNewsTabData.data.topnews;
         if (!isMore) {
+            // 初始化头条新闻
+            mTopNewsList = mNewsTabData.data.topnews;
             if (mTopNewsList != null) {
                 mTopNewsAdapter = new TopNewsAdapter();
                 mViewPager.setAdapter(mTopNewsAdapter);
@@ -225,14 +226,14 @@ public class TabDetailPager extends BaseMenuDetailPager {
 
                     @Override
                     public void onPageSelected(int position) {
-                        System.out.println("position:" + position);
+                        //System.out.println("position:" + position);
                         NewsData.TopNews topNews = mTopNewsList.get(position);
                         tvTopNewsTitle.setText(topNews.title);
                     }
 
                     @Override
-                    public void onPageScrolled(int position, float positionOffset,
-                                               int positionOffsetPixels) {
+                    public void onPageScrolled(int position,
+                                               float positionOffset, int positionOffsetPixels) {
                     }
 
                     @Override
@@ -250,14 +251,56 @@ public class TabDetailPager extends BaseMenuDetailPager {
                 mNewsAdapter = new NewsAdapter();
                 lvList.setAdapter(mNewsAdapter);
             }
-        }
-        else {
+
+            if (mHandler == null) {
+                mHandler = new Handler() {
+                    public void handleMessage(android.os.Message msg) {
+                        int currentItem = mViewPager.getCurrentItem();
+
+                        if (currentItem < mTopNewsList.size() - 1) {
+                            currentItem++;
+                        } else {
+                            currentItem = 0;
+                        }
+
+                        mViewPager.setCurrentItem(currentItem);
+
+                        mHandler.sendEmptyMessageDelayed(0, 2000);
+                    };
+                };
+
+                // 延时2秒切换广告条
+                mHandler.sendEmptyMessageDelayed(0, 2000);
+
+                mViewPager.setOnTouchListener(new View.OnTouchListener() {
+
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        switch (event.getAction()) {
+                            case MotionEvent.ACTION_DOWN:
+                                System.out.println("ACTION_DOWN");
+                                // 删除所有消息
+                                mHandler.removeCallbacksAndMessages(null);
+                                break;
+                            case MotionEvent.ACTION_CANCEL:// 事件取消(当按下后,然后移动下拉刷新,导致抬起后无法响应ACTION_UP,
+                                // 但此时会响应ACTION_CANCEL,也需要继续播放轮播条)
+                            case MotionEvent.ACTION_UP:
+                                // 延时2秒切换广告条
+                                mHandler.sendEmptyMessageDelayed(0, 2000);
+                                break;
+                            default:
+                                break;
+                        }
+                        return false;
+                    }
+                });
+            }
+        } else {
             // 加载更多
             ArrayList<NewsData.News> moreData = mNewsTabData.data.news;
             mNewsList.addAll(moreData);// 追加数据
             mNewsAdapter.notifyDataSetChanged();// 刷新listview
         }
-
     }
     class TopNewsAdapter extends PagerAdapter {
 

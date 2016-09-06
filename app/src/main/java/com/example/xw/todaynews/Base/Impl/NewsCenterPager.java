@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.provider.SyncStateContract;
 import android.text.TextUtils;
 import android.view.Gravity;
+import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -90,7 +91,7 @@ public class NewsCenterPager extends BasePager {
         mMenuDetailPagers = new ArrayList<BaseMenuDetailPager>();
         mMenuDetailPagers.add(new NewsMenuDetailPager(mActivity,mNewsMenuData.data.get(0).children));
         mMenuDetailPagers.add(new TopicMenuDetailPager(mActivity));
-        mMenuDetailPagers.add(new PhotosMenuDetailPager(mActivity));
+        mMenuDetailPagers.add(new PhotosMenuDetailPager(mActivity,btnDisplay));
         mMenuDetailPagers.add(new InteractMenuDetailPager(mActivity));
 
         // 菜单详情页-新闻作为初始页面
@@ -106,5 +107,11 @@ public class NewsCenterPager extends BasePager {
 
         // 更改标题
         tvTitle.setText(mNewsMenuData.data.get(position).title);
+        // 组图页面需要显示切换按钮
+        if (pager instanceof PhotosMenuDetailPager) {
+            btnDisplay.setVisibility(View.VISIBLE);
+        } else {
+            btnDisplay.setVisibility(View.GONE);
+        }
     }
 }
