@@ -9,12 +9,14 @@ import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.example.xw.todaynews.R;
+import com.example.xw.todaynews.utils.DensityUtils;
 import com.example.xw.todaynews.utils.PreUtils;
 
 import java.util.ArrayList;
@@ -35,6 +37,7 @@ public class GuideActivity extends Activity implements View.OnClickListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_guide);
         mImageViewList=new ArrayList<ImageView>();
         ivRedPoint= (ImageView) findViewById(R.id.red_point);
@@ -52,7 +55,7 @@ public class GuideActivity extends Activity implements View.OnClickListener {
             LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT);
             if(i>0){
-                lp.leftMargin=8;
+                lp.leftMargin= DensityUtils.dp2px(8,this);
             }
             point.setLayoutParams(lp);
             llContainer.addView(point);

@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.view.Window;
+import android.view.WindowManager;
 
 import com.example.xw.todaynews.Base.Impl.ContentFragment;
 import com.example.xw.todaynews.Base.Impl.LeftMenuFragment;
@@ -30,8 +31,12 @@ public class MainActivity extends SlidingFragmentActivity {
         SlidingMenu slidingMenu = getSlidingMenu();
         // 全屏触摸
         slidingMenu.setTouchModeAbove(SlidingMenu.TOUCHMODE_FULLSCREEN);
-        // 屏幕预留200像素
-        slidingMenu.setBehindOffset(200);
+        WindowManager wm = (WindowManager) getSystemService(WINDOW_SERVICE);
+        int width = wm.getDefaultDisplay().getWidth();
+
+        // 屏幕预留200像素(预留一定比例,进行屏幕适配)
+        slidingMenu.setBehindOffset((int) (width * 0.625));
+
 
         initFragment();
     }

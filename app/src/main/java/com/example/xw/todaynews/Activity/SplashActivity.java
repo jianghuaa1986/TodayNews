@@ -19,6 +19,7 @@ public class SplashActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_splash);
         RelativeLayout sp_root= (RelativeLayout) findViewById(R.id.sp_root);
         //添加动画

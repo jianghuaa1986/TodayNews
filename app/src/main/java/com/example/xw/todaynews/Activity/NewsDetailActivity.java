@@ -70,6 +70,7 @@ public class NewsDetailActivity extends Activity implements View.OnClickListener
         settings.setUseWideViewPort(true);// 只是双击缩放
         settings.setJavaScriptEnabled(true);// 打开js功能
 
+
         mWebView.setWebViewClient(new WebViewClient() {
             // 网页开始加载
             @Override
@@ -131,7 +132,7 @@ public class NewsDetailActivity extends Activity implements View.OnClickListener
      * 选择字体大小的弹窗
      */
     private void showChooseDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this,AlertDialog.THEME_HOLO_LIGHT);
         builder.setTitle("字体设置");
         String[] items = new String[] { "超大号字体", "大号字体", "正常字体", "小号字体",
                 "超小号字体" };
