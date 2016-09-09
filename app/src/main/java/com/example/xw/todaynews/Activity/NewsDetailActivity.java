@@ -77,7 +77,7 @@ public class NewsDetailActivity extends Activity implements View.OnClickListener
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
                 super.onPageStarted(view, url, favicon);
                 System.out.println("网页开始加载");
-                pbLoading.setVisibility(View.VISIBLE);
+               // pbLoading.setVisibility(View.VISIBLE);
             }
 
             // 网页跳转
@@ -97,7 +97,7 @@ public class NewsDetailActivity extends Activity implements View.OnClickListener
                 super.onPageFinished(view, url);
 
                 System.out.println("网页加载结束");
-                pbLoading.setVisibility(View.GONE);
+                //pbLoading.setVisibility(View.GONE);
 
             }
         });

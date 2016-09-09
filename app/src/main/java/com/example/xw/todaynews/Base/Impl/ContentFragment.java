@@ -67,13 +67,13 @@ public class ContentFragment extends BaseFragment  {
                         // 智慧服务
                         mViewPager.setCurrentItem(2, false);
                         mPagers.get(2).initData();// 切到当前页面,再初始化数据
-                        setSlidingMenuEnable(true);// 开启侧边栏
+                        setSlidingMenuEnable(false);// 开启侧边栏
                         break;
                     case R.id.rb_gov:
                         // 政务
                         mViewPager.setCurrentItem(3, false);
                         mPagers.get(3).initData();// 切到当前页面,再初始化数据
-                        setSlidingMenuEnable(true);// 开启侧边栏
+                        setSlidingMenuEnable(false);// 开启侧边栏
                         break;
                     case R.id.rb_setting:
                         // 设置
